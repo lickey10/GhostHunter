@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class EMF : MonoBehaviour {
 	float magneticHeading = 0;
@@ -26,6 +27,7 @@ public class EMF : MonoBehaviour {
 	public bool AutomaticPictureTaking = false; //whether or not the app will automatically take pictures
 	public int AutomaticPictureNumber = 5; //the number of pictures to take if AutomaticPictureTaking is on and triggered
 	public bool VibrateHandset = true;//whether the handset will vibrate on a big hit
+	public SCTV sctv;
 	
 	// Use this for initialization
 	void Start () {
@@ -103,20 +105,27 @@ public class EMF : MonoBehaviour {
 			
 			theCamera = null;
 		}
-	}
+    }
 	
 	void saveGhost()
 	{
-		DetectedGhost detectedGhost = new DetectedGhost();
-		detectedGhost.ConsecutiveHits = consecutiveHits;
-		detectedGhost.Location = hitLocation;
-		detectedGhost.MagneticHeading = magneticHeading;
-		detectedGhost.RawVector = rawVector;
-		detectedGhost.TrueHeading = trueHeading;
-		detectedGhost.TimeStamp = hitTimeStamp;
-		
-		detectedGhost.Save();
-	}
+		clsAnomale anomale = new clsAnomale();
+        anomale.Location = hitLocation;
+        anomale.TimeStamp = hitTimeStamp;
+
+        clsEMF emf = new clsEMF();
+        emf.ConsecutiveHits = consecutiveHits;
+        emf.MagneticHeading = magneticHeading;
+        emf.RawVector = rawVector;
+        emf.TrueHeading = trueHeading;
+        emf.TimeStamp = hitTimeStamp;
+
+		anomale.EMF = new List<clsEMF>();
+		anomale.EMF.Add(emf);
+        //anomale.Save();
+
+        sctv.AnomaleDetected(anomale);
+    }
 
 	/// <summary>
 	/// Detect entities using other signs
